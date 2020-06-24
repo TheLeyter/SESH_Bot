@@ -49,7 +49,7 @@ namespace DiscordBot
 
             var context = new SocketCommandContext(_client, message);
 
-            var result = await _commands.ExecuteAsync(context, prefPos, null);
+            var result = await _commands.ExecuteAsync(context, prefPos, _services,MultiMatchHandling.Best);
         }
         private Task LogAsync(LogMessage log)
         {

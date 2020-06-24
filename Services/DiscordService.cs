@@ -12,13 +12,13 @@ namespace DiscordBot
         private DiscordSocketClient _client;
         private CommandHandler _commandHandler;
         private ServiceProvider _services;
-        private Configuration _config;
         private LavaNode _lavaNode;
         private LavaLinkAudio _audioService;
+        private Configuration _config;
 
         public DiscordService()
         {
-            _services = this.ConfigurServices();
+            _services = ConfigurServices();
             _client = _services.GetRequiredService<DiscordSocketClient>();
             _commandHandler = _services.GetRequiredService<CommandHandler>();
             _lavaNode = _services.GetRequiredService<LavaNode>();
@@ -27,7 +27,6 @@ namespace DiscordBot
             _client.Ready += ReadyAsync;
             _client.Log += LogClientAsync;
             _lavaNode.OnLog += LogLavaAsync;
-            _lavaNode.OnTrackEnded += _audioService.TrackEnded;
 
         }
 
