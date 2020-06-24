@@ -1,2 +1,2 @@
 # SESH_Bot
-Discord_bot
+Не работает ¯\_(ツ)_/¯
