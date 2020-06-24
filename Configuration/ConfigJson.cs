@@ -7,6 +7,7 @@ namespace DiscordBot
     {
         public string Token { get; set; }
         public string Prefix { get; set; }
+        public string GameStatus { get; set; }
     }
     class Configuration
     {

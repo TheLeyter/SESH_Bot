@@ -16,12 +16,12 @@ namespace DiscordBot
         private CommandService _commands;
         private IServiceProvider _services;
 
-        public CommandHandler(IServiceProvider services,string prefix)
+        public CommandHandler(IServiceProvider services)
         {
             _commands = services.GetRequiredService<CommandService>();
             _client = services.GetRequiredService<DiscordSocketClient>();
             _services = services;
-            _prefix = prefix;
+            _prefix = new Configuration().conf.Prefix;
             AddEvents();
         }
 
