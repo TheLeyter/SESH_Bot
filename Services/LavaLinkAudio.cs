@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Victoria;
+﻿using Victoria;
 using System.Threading.Tasks;
 using Discord;
 

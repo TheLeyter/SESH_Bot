@@ -5,6 +5,7 @@ namespace DiscordBot
 {
     class Program
     {
-        private static Task Main() => new DiscordService().InitializeAsync();
+        private static Task Main() 
+            => new DiscordService().InitializeAsync();
     }
 }

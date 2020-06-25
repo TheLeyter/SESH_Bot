@@ -32,6 +32,7 @@ namespace DiscordBot
 
         public async Task InitializeAsync()
         {
+            LavalinkStart.Start();
             _config = new Configuration();
             await _client.LoginAsync(TokenType.Bot, _config.conf.Token);
             await _client.StartAsync();
