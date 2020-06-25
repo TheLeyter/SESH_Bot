@@ -18,5 +18,10 @@ namespace DiscordBot
         {
             await _lavaNode.JoinAsync(voiceState.VoiceChannel, textChannel);
         }
+
+        public async Task LeaveAsync(IGuild guild)
+        {
+            await _lavaNode.LeaveAsync(_lavaNode.GetPlayer(guild).VoiceChannel);
+        }
     }
 }
