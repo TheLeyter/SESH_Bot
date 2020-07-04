@@ -147,6 +147,47 @@ namespace DiscordBot
         }
 
 
+        [Command("Ps")]
+        public async Task Pause()
+        {
+            var player = _lavaNode.GetPlayer(Context.Guild);
+
+            if (player.PlayerState == PlayerState.Playing)
+            {
+                await player.PauseAsync();
+            }
+
+            var embed = new EmbedBuilder()
+            .WithTitle("🎵 Music 🎵")
+            .WithDescription($"{player.Track.Title} Paused!!!")
+            .WithImageUrl($"https://img.youtube.com/vi/{player.Track.Url.Substring(player.Track.Url.IndexOf('=') + 1)}/hqdefault.jpg")
+            .WithColor(Color.Gold)
+            .WithTimestamp(DateTimeOffset.Now)
+            .Build();
+            await ReplyAsync(embed: embed);
+        }
+
+        [Command("Res")]
+        public async Task Resume()
+        {
+            var player = _lavaNode.GetPlayer(Context.Guild);
+
+            if (player.PlayerState == PlayerState.Paused)
+            {
+                await player.ResumeAsync();
+            }
+
+            var embed = new EmbedBuilder()
+            .WithTitle("🎵 Music 🎵")
+            .WithDescription($"{player.Track.Title} Resumed!!!")
+            .WithImageUrl($"https://img.youtube.com/vi/{player.Track.Url.Substring(player.Track.Url.IndexOf('=') + 1)}/hqdefault.jpg")
+            .WithColor(Color.Gold)
+            .WithTimestamp(DateTimeOffset.Now)
+            .Build();
+            await ReplyAsync(embed: embed);
+        }
+
+
 
         public static async Task TrackEnd(TrackEndedEventArgs args)
         {
