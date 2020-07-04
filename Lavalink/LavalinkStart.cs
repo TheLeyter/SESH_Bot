@@ -14,6 +14,7 @@ namespace DiscordBot
             ProcessStartInfo info = new ProcessStartInfo();
             info.FileName = "powershell";
             info.Arguments = $"java -jar {Environment.CurrentDirectory}"+@".\Lavalink.jar";
+
             Process.Start(info);
         }
     }

@@ -33,7 +33,7 @@ namespace DiscordBot
                 return;
             }
 
-            if((Context.User as IVoiceState).VoiceChannel == null)
+            if ((Context.User as IVoiceState).VoiceChannel == null)
             {
                 embed = new EmbedBuilder()
                 .WithTitle("🎵 Music 🎵")
@@ -69,7 +69,9 @@ namespace DiscordBot
 
             player = null;
 
+
             await _lavaNode.LeaveAsync((Context.User as IVoiceState).VoiceChannel);
+            //await player.DisposeAsync();
 
             var embed = new EmbedBuilder()
                 .WithTitle("🎵 Music 🎵")
@@ -82,7 +84,7 @@ namespace DiscordBot
         }
 
         [Command("Play")]
-        public async Task Play([Remainder]string url)
+        public async Task Play([Remainder] string url)
         {
             Embed embed;
             if ((Context.User as IVoiceState).VoiceChannel == null)
@@ -106,7 +108,7 @@ namespace DiscordBot
             LavaTrack track;
             var search = await _lavaNode.SearchAsync(url);
 
-            if(search.LoadStatus == LoadStatus.NoMatches)
+            if (search.LoadStatus == LoadStatus.NoMatches)
             {
                 embed = new EmbedBuilder()
                 .WithTitle("🎵 Music 🎵")
@@ -121,7 +123,7 @@ namespace DiscordBot
 
             track = search.Tracks.FirstOrDefault();
 
-            if(player.Track!=null&&player.PlayerState == PlayerState.Playing || player.PlayerState == PlayerState.Paused)
+            if (player.Track != null && player.PlayerState == PlayerState.Playing || player.PlayerState == PlayerState.Paused)
             {
                 player.Queue.Enqueue(track);
                 embed = new EmbedBuilder()
@@ -135,11 +137,11 @@ namespace DiscordBot
             }
 
             await player.PlayAsync(track);
-            player.Queue.Enqueue(track);
+            player.Queue.Remove(track);
             embed = new EmbedBuilder()
             .WithTitle("🎵 Music 🎵")
             .WithDescription($"{track.Title}")
-            .WithImageUrl($"https://img.youtube.com/vi/{url.Substring(url.IndexOf('=')+1)}/maxresdefault.jpg")
+            .WithImageUrl($"https://img.youtube.com/vi/{track.Url.Substring(track.Url.IndexOf('=') + 1)}/hqdefault.jpg")
             .WithColor(Color.DarkPurple)
             .WithTimestamp(DateTimeOffset.Now)
             .Build();
@@ -187,11 +189,61 @@ namespace DiscordBot
             await ReplyAsync(embed: embed);
         }
 
+        [Command("Skip")]
+        public async Task Skip()
+        {
 
+            if (_lavaNode.HasPlayer(Context.Guild) == false)
+            {
+                var embed = new EmbedBuilder()
+                    .WithTitle("🎵 Music 🎵")
+                    .WithDescription($"You IDIOT \nI'm not connected to voice channel!!!")
+                    .WithColor(Color.DarkRed)
+                    .WithTimestamp(DateTimeOffset.Now)
+                    .Build();
+                await ReplyAsync(embed: embed);
+                return;
+            }
+            var player = _lavaNode.GetPlayer(Context.Guild);
+            if ((Context.User as IVoiceState).VoiceChannel == null)
+            {
+                var embed = new EmbedBuilder()
+                    .WithTitle("🎵 Music 🎵")
+                    .WithDescription($"You are not connected to voice chenell!!!")
+                    .WithColor(Color.Gold)
+                    .WithTimestamp(DateTimeOffset.Now)
+                    .Build();
+                await player.TextChannel.SendMessageAsync(embed: embed);
+                return;
+            }
+
+            if (player.Queue.Count == 0)
+            {
+                var embed = new EmbedBuilder()
+                    .WithTitle("🎵 Music 🎵")
+                    .WithDescription($"Queue finished!!!")
+                    .WithColor(Color.Gold)
+                    .WithTimestamp(DateTimeOffset.Now)
+                    .Build();
+                await player.TextChannel.SendMessageAsync(embed: embed);
+                await _lavaNode.LeaveAsync((Context.User as IVoiceState).VoiceChannel);
+            }
+            else
+            {
+                    await player.SkipAsync();
+                    var embed = new EmbedBuilder()
+                        .WithTitle("🎵 Music 🎵")
+                        .WithDescription($"{player.Track.Title} Paused!!!")
+                        .WithImageUrl($"https://img.youtube.com/vi/{player.Track.Url.Substring(player.Track.Url.IndexOf('=') + 1)}/hqdefault.jpg")
+                        .WithColor(Color.Gold)
+                        .WithTimestamp(DateTimeOffset.Now)
+                        .Build();
+                    await ReplyAsync(embed: embed);
+            }
+        }
 
         public static async Task TrackEnd(TrackEndedEventArgs args)
         {
-
             if (!args.Reason.ShouldPlayNext())
             {
                 return;
@@ -210,19 +262,15 @@ namespace DiscordBot
 
             await args.Player.PlayAsync(track);
 
+            var embed = new EmbedBuilder()
+           .WithTitle("🎵 Music 🎵")
+           .WithDescription($"{track.Title} now playing!!!")
+           .WithImageUrl($"https://img.youtube.com/vi/{track.Url.Substring(track.Url.IndexOf('=') + 1)}/hqdefault.jpg")
+           .WithColor(Color.DarkMagenta)
+           .WithTimestamp(DateTimeOffset.Now)
+           .Build();
+            await args.Player.TextChannel.SendMessageAsync(embed: embed);
 
-            //args.Player.Queue.TryDequeue(out var next);
-            //LavaTrack track = next as LavaTrack;
-            //await args.Player.PlayAsync(track);
-
-            ////var embed = new EmbedBuilder()
-            ////.WithTitle("🎵 Music 🎵")
-            ////.WithDescription($"{track.Title}")
-            ////.WithImageUrl($"https://img.youtube.com/vi/{track.Url.Substring(track.Url.IndexOf('=') + 1)}/hqdefault.jpg")
-            ////.WithColor(Color.DarkPurple)
-            ////.WithTimestamp(DateTimeOffset.Now)
-            ////.Build();
-            //// await ReplyAsync(embed: embed);
         }
     }
 }
